@@ -1,103 +1,179 @@
-from main import *
+from chromeDriver import *
+from time import sleep
 
-from dotenv import load_dotenv
-import os
+def main():
+    from dotenv import load_dotenv
+    import os
+
+    message = 'test'
+    victim = '_oof.boii_'
+
+    load_dotenv()
+    instabot = bot(os.getenv('INSTA_USERNAME'), os.getenv('INSTA_PASSWORD'), cookiesDirectory='Z:\Coding\webscraping\chromeDriverCookies')
+    sleep(3)
+    instabot.findUser(victim)
+    sleep(3)
+    inp = input('yes or no\n')
+
+    while inp == 'y':
+        instabot.sendMessage(message)
+        inp = input('yes or no \n')
+
 
 class bot:
-    def __init__(self, username, password, sleepDuration=2) -> None:
+    def __init__(self, username, password, cookiesDirectory=None, sleepDuration=2, timeOutDuration=20) -> None:
+        self.baseUrl = 'https://instagram.com'
+        self.dmUrl = 'https://www.instagram.com/direct/inbox/'
+        
         self.username = username
         self.password = password
         self.sleepDuration = sleepDuration
-        self.victim = victim
-        self.message = message
-        self.baseUrl = 'https://instagram.com'
-        self.dmUrl = 'https://www.instagram.com/direct/inbox/'
-        self.bot = driver
+        
+        #trackes if a valid user's dm's are open before attempting to send message
+        self.userIsFound = False
+        if cookiesDirectory != None:
+            self.isUsingCookies = True
+        else:
+            self.isUsingCookies = False
+        self.driver = initChromeDriver(fullScreen=True, headLess=False, cookiesDirectory=cookiesDirectory)
+        self.wait = WebDriverWait(self.driver, timeOutDuration)
+
+        if not self.login():
+            exit()
         
 
     def login(self):
     
-        self.bot.get(self.baseUrl)
-        
-        # ENTERING THE USERNAME FOR LOGIN INTO INSTAGRAM
-        enter_username = WebDriverWait(self.bot, 20).until(
-            expected_conditions.presence_of_element_located((By.NAME, 'username')))
-    
-        enter_username.send_keys(self.username)
-        
-        # ENTERING THE PASSWORD FOR LOGIN INTO INSTAGRAM
-        enter_password = WebDriverWait(self.bot, 20).until(
-            expected_conditions.presence_of_element_located((By.NAME, 'password')))
-        enter_password.send_keys(self.password)
-    
-        # RETURNING THE PASSWORD and login into the account
-        enter_password.send_keys(Keys.RETURN)
-        
-        #sleep to make look less bot like
-        sleep(self.sleepDuration)
-        popup1 = WebDriverWait(self.bot, 20).until(
-            expected_conditions.presence_of_element_located(("xpath", '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/section/main/div/div/div/div/div'))).click()
+        self.driver.get(self.baseUrl)
 
-        sleep(self.sleepDuration)
-        popup2 = WebDriverWait(self.bot, 20).until(
-            expected_conditions.presence_of_element_located(("xpath", '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/button[2]'))).click()
+        if self.isUsingCookies:
+            timeOut = 5
+        else:
+            timeOut = 20
+
+        try:
+            # ENTERING THE USERNAME FOR LOGIN INTO INSTAGRAM
+            enter_username = WebDriverWait(self.driver, timeOut).until(
+                expected_conditions.presence_of_element_located((By.NAME, 'username')))
+        
+            enter_username.send_keys(self.username)
+            
+            # ENTERING THE PASSWORD FOR LOGIN INTO INSTAGRAM
+            enter_password = WebDriverWait(self.driver, timeOut).until(
+                expected_conditions.presence_of_element_located((By.NAME, 'password')))
+            enter_password.send_keys(self.password)
+        
+            # RETURNING THE PASSWORD and login into the account
+            enter_password.send_keys(Keys.RETURN)
+
+        except seExceptions.NoSuchElementException:
+            #if cookies are enabled then this exception is expected
+            if self.isUsingCookies:
+                print('USING COOKIES!!!')
+                return True
+            else:
+                print('LOGIN FAILURE. NoSuchElementException and/or TimeOutException raised.')
+                return False
+        except seExceptions.TimeoutException:
+            #if cookies are enabled then this exception is expected
+            if self.isUsingCookies:
+                print('USING COOKIES!!!')
+                return True
+            else:
+                print('LOGIN FAILURE. NoSuchElementException and/or TimeOutException raised.')
+                return False
+        
+        if self.isUsingCookies:
+            sleep(self.sleepDuration)
+            #save login info popup - yes is clicked
+            popup1 = self.wait.until(
+                expected_conditions.presence_of_element_located(
+                ("xpath", '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/section/main/div/div/div/section/div/button')
+                )).click()
+            sleep(self.sleepDuration)
+            
+        else:
+            #sleep to make look less bot like
+            sleep(self.sleepDuration)
+            #save login info popup - no is clicked
+            popup1 = self.wait.until(
+                expected_conditions.presence_of_element_located(
+                ("xpath", '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/section/main/div/div/div/div/div')
+                )).click()
+
+            sleep(self.sleepDuration)
+        #finally clause of if else
+        #enable notifications popup - no is clicked
+        popup2 = self.wait.until(
+            expected_conditions.presence_of_element_located(
+            ("xpath", '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/button[2]')
+            )).click()
+        
+        return True
         
        
 
 
-    def findUser(self, user=''):
+    def findUser(self, user=None):
         #redirects to dms
-        self.bot.get(self.dmUrl)
+        self.driver.get(self.dmUrl)
+        if user == None:
+            print('no user inputed')
+            self.userIsFound = False
+            return
 
         #clicks on new message button
-        newMessage = WebDriverWait(self.bot, 20).until(
-            expected_conditions.presence_of_element_located(('xpath', '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/section/div/div/div/div[1]/div/div[2]/div/div/div/div[4]/div'))).click()
+        newMessage = self.wait.until(
+            expected_conditions.presence_of_element_located(
+            ('xpath', '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/section/div/div/div/div[1]/div/div[2]/div/div/div/div[4]/div')
+            )).click()
         
         sleep(self.sleepDuration)
         
         #inputs username into search bar
-        search = self.bot.switch_to.active_element
+        search = self.driver.switch_to.active_element
         search.send_keys(user)
 
         sleep(self.sleepDuration)
     
         # click on the username
-        #self.bot.find_element("xpath",'/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div[2]/div/div/div/div/div/div/div[1]/div/div[3]/div/div/div[1]').click()
-        usernameResult = WebDriverWait(self.bot, 20).until(
-            expected_conditions.presence_of_element_located(('xpath', '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div[2]/div/div/div/div/div/div/div[1]/div/div[3]/div/div/div[1]'))).click()
+        #self.driver.find_element("xpath",'/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div[2]/div/div/div/div/div/div/div[1]/div/div[3]/div/div/div[1]').click()
+        usernameResult = self.wait.until(
+            expected_conditions.presence_of_element_located(
+            ('xpath', '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div[2]/div/div/div/div/div/div/div[1]/div/div[3]/div/div/div[1]')
+            )).click()
+        
         sleep(self.sleepDuration)
     
         # next button
-        chatButton = WebDriverWait(self.bot, 20).until(
-            expected_conditions.presence_of_element_located(('xpath', '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div[2]/div/div/div/div/div/div/div[1]/div/div[4]/div'))).click()
+        chatButton = self.wait.until(
+            expected_conditions.presence_of_element_located(
+            ('xpath', '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div[2]/div/div/div/div/div/div/div[1]/div/div[4]/div')
+            )).click()
+        
+        self.userIsFound = True
         
         
     
-    def sendMessage(self, messsage=''):
-        # click on message area
-        send = self.bot.find_element("xpath",'/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/section/div/div/div/div[1]/div/div[2]/div/div/div/div/div/div[2]/div/div/div[2]/div/div/div[2]/div/div[1]/p')
+    def sendMessage(self, message=None):
+        if message == None or message == '':
+            print('non valid message provided')
+            return
+        if not self.userIsFound:
+            print('user must be found first')
+            return
+        
+        # locates message area
+        messageBox = self.driver.find_element("xpath",'/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/section/div/div/div/div[1]/div/div[2]/div/div/div/div/div/div[2]/div/div/div[2]/div/div/div[2]/div/div[1]/p')
     
         # types message
-        send.send_keys(message)
+        messageBox.send_keys(message)
         sleep(self.sleepDuration)
     
         # send message
-        send.send_keys(Keys.RETURN)
-        sleep(self.sleepDuration)
+        messageBox.send_keys(Keys.RETURN)
     
     
 
-message = 'test'
-victim = '_oof.boii_'
-
-load_dotenv()
-instabot = bot(os.getenv('INSTA_USERNAME'), os.getenv('INSTA_PASSWORD'))
-instabot.login()
-sleep(3)
-instabot.findUser(victim)
-sleep(3)
-input = input('yes or no\n')
-
-while input == 'y':
-    instabot.sendMessage(message)
-    input = input('yes or no \n')
+if __name__ == '__main__':
+    main()
