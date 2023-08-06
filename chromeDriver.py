@@ -12,6 +12,8 @@ def initChromeDriver(fullScreen=True, headLess=False, cookiesDirectory=None):
 
     options = webdriver.ChromeOptions()
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    #sets chrome language to english
+    options.add_argument('lang=en-US')
 
     if fullScreen:
         options.add_argument("--window-size=1920,1080")
@@ -19,7 +21,7 @@ def initChromeDriver(fullScreen=True, headLess=False, cookiesDirectory=None):
         options.add_argument("--headless=new")
     if cookiesDirectory != None:
         options.add_argument(r"user-data-dir=" + cookiesDirectory)
-        options.add_argument('lang=es')
+        
 
 
     return webdriver.Chrome(service=Service(), options=options)

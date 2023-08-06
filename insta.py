@@ -91,8 +91,6 @@ class InstagramBot:
             )).click()
         
         return True
-        
-       
 
 
     def findUser(self, user=None):
@@ -135,7 +133,6 @@ class InstagramBot:
         self.userIsFound = True
         
         
-    
     def sendMessage(self, message=None):
         if message == None or message == '':
             print('non valid message provided')
@@ -155,3 +152,5 @@ class InstagramBot:
         messageBox.send_keys(Keys.RETURN)
     
     
+    def windowIsOpen(self):
+        return len(self.driver.window_handles) > 0

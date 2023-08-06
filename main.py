@@ -14,6 +14,6 @@ instabot.findUser(victim)
 sleep(3)
 inp = input('yes or no\n')
 
-while inp == 'y':
+while inp == 'y' and instabot.windowIsOpen():
     instabot.sendMessage(message)
     inp = input('yes or no \n')
