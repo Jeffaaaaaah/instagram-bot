@@ -1,26 +1,7 @@
 from chromeDriver import *
 from time import sleep
 
-def main():
-    from dotenv import load_dotenv
-    import os
-
-    message = 'test'
-    victim = '_oof.boii_'
-
-    load_dotenv()
-    instabot = bot(os.getenv('INSTA_USERNAME'), os.getenv('INSTA_PASSWORD'), cookiesDirectory='Z:\Coding\webscraping\chromeDriverCookies')
-    sleep(3)
-    instabot.findUser(victim)
-    sleep(3)
-    inp = input('yes or no\n')
-
-    while inp == 'y':
-        instabot.sendMessage(message)
-        inp = input('yes or no \n')
-
-
-class bot:
+class InstagramBot:
     def __init__(self, username, password, cookiesDirectory=None, sleepDuration=2, timeOutDuration=20) -> None:
         self.baseUrl = 'https://instagram.com'
         self.dmUrl = 'https://www.instagram.com/direct/inbox/'
@@ -43,7 +24,6 @@ class bot:
         
 
     def login(self):
-    
         self.driver.get(self.baseUrl)
 
         if self.isUsingCookies:
@@ -72,7 +52,7 @@ class bot:
                 print('USING COOKIES!!!')
                 return True
             else:
-                print('LOGIN FAILURE. NoSuchElementException and/or TimeOutException raised.')
+                print('LOGIN FAILURE. NoSuchElementException')
                 return False
         except seExceptions.TimeoutException:
             #if cookies are enabled then this exception is expected
@@ -80,9 +60,10 @@ class bot:
                 print('USING COOKIES!!!')
                 return True
             else:
-                print('LOGIN FAILURE. NoSuchElementException and/or TimeOutException raised.')
+                print('LOGIN FAILURE. TimeOutException raised.')
                 return False
         
+        #handling popups
         if self.isUsingCookies:
             sleep(self.sleepDuration)
             #save login info popup - yes is clicked
@@ -102,8 +83,8 @@ class bot:
                 )).click()
 
             sleep(self.sleepDuration)
-        #finally clause of if else
-        #enable notifications popup - no is clicked
+
+        #enable notifications popup - always no is clicked
         popup2 = self.wait.until(
             expected_conditions.presence_of_element_located(
             ("xpath", '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/button[2]')
@@ -174,6 +155,3 @@ class bot:
         messageBox.send_keys(Keys.RETURN)
     
     
-
-if __name__ == '__main__':
-    main()
