@@ -2,18 +2,38 @@ from dotenv import load_dotenv
 import os
 from insta import InstagramBot
 from time import sleep
+from random import random
+from chromeDriver import Keys
+from lyricFinder import lyricFinder
 
-message = 'test'
 victim = '_oof.boii_'
 
+lyricBot = lyricFinder()
+
+filePath = './txt/' + input('File name (dir = ./txt/)?')
+if not os.path.exists(filePath):
+    print('File not Found')
+    url = input('input url (https://www.azlyrics.com/lyrics/"artist"/"song"): ')
+    lyricBot.findLyrics(url)
+    filePath = './txt/' + lyricBot.parseFileName(url) + '.txt'
+
+lyrics = []
+with open(filePath) as f:
+    lyrics = f.read().split('\n')
+
+
 load_dotenv()
-instabot = InstagramBot(os.getenv('INSTA_USERNAME'), os.getenv('INSTA_PASSWORD'), cookiesDirectory='Z:\Coding\instagramBot\cookies')
+instabot = InstagramBot(os.getenv('INSTA_USERNAME'), os.getenv('INSTA_PASSWORD'), cookiesDirectory='Z:\Coding\instagramBot\cookies', sleepDuration=4)
 
-sleep(3)
+sleep(10 * random())
 instabot.findUser(victim)
-sleep(3)
-inp = input('yes or no\n')
+sleep(10 * random())
 
-while inp == 'y' and instabot.windowIsOpen():
-    instabot.sendMessage(message)
-    inp = input('yes or no \n')
+
+for line in lyrics:
+    if not instabot.windowIsOpen():
+        instabot.driver.close()
+        exit()
+    instabot.sendMessage(line)
+    sleep((random() * 3) + 2)
+

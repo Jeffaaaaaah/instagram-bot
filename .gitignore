@@ -1,4 +1,4 @@
 __pycache__
 .env
-s.txt
+*.txt
 *cookies
