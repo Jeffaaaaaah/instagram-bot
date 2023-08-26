@@ -115,6 +115,7 @@ class InstagramBot:
             return
         
         self.driver.get(self.URLS['HomePage'])
+        sleep(self.sleepDuration)
         moreButton = self.wait.until(expected_conditions.presence_of_element_located(
             ('xpath', '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[1]/div/div/div/div/div[3]/span/div/a/div')
             )).click()
@@ -183,12 +184,11 @@ class InstagramBot:
             return
         
         # locates message area
-        messageBox = self.driver.find_element("xpath",'/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/section/div/div/div/div[1]/div/div[2]/div/div/div/div/div/div[2]/div/div/div[2]/div/div/div[2]/div/div[1]/p')
+        messageBox = self.wait.until(expected_conditions.presence_of_element_located(
+            ("xpath",'/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/section/div/div/div/div[1]/div/div[2]/div/div/div/div/div/div[2]/div/div/div[2]/div/div/div[2]/div/div[1]/p')))
     
         # types message
-        messageBox.send_keys(message)
-        sleep(self.sleepDuration)
-    
+        messageBox.send_keys(message)    
         # send message
         messageBox.send_keys(Keys.RETURN)
     
