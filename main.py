@@ -3,8 +3,8 @@ import os
 from insta import InstagramBot
 from time import sleep
 from random import random
-from ChromeDriver import Keys
-from LyricFinder import lyricFinder
+from chromeDriver import Keys
+from lyricFinder import lyricFinder
 
 victim = '_oof.boii_'
 
