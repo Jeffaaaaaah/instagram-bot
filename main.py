@@ -8,18 +8,9 @@ from lyricFinder import lyricFinder
 
 victim = '_oof.boii_'
 
-lyricBot = lyricFinder()
 
-filePath = './txt/' + input('File name (dir = ./txt/)?')
-if not os.path.exists(filePath):
-    print('File not Found')
-    url = input('input url (https://www.azlyrics.com/lyrics/"artist"/"song"): ')
-    lyricBot.findLyrics(url)
-    filePath = './txt/' + lyricBot.parseFileName(url) + '.txt'
 
-lyrics = []
-with open(filePath) as f:
-    lyrics = f.read().split('\n')
+lyrics = ['hi', 'test', 'test', 'bye']
 
 
 load_dotenv()
