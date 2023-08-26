@@ -18,7 +18,7 @@ instabot = InstagramBot( cookiesDirectory='Z:\Coding\instagramBot\cookies', slee
 instabot.login(os.getenv('INSTA_USERNAME'), os.getenv('INSTA_PASSWORD'))
 
 sleep(10 * random())
-instabot.findUser(victim)
+instabot.findUserDirectMessage(victim)
 sleep(10 * random())
 
 

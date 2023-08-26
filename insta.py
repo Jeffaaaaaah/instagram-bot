@@ -3,10 +3,11 @@ from time import sleep
 from enum import Enum
 
 class State(Enum):
+    ERROR = -1
     INITIALIZED = 0
     LOGGED_IN = 1
     LOGGED_OUT = 2
-    USER_FOUND = 3
+    MODE_MESSAGING = 3
 
 URLS = {'HomePage' : 'https://instagram.com',
         'DirectMessageInbox' : 'https://www.instagram.com/direct/inbox/'
@@ -17,7 +18,6 @@ class InstagramBot:
     def __init__(self, cookiesDirectory=None, sleepDuration=2, timeOutDuration=20) -> None:
         self.URLS = URLS
         self.CACHE = {}
-        self.STATE = None
         
         self.sleepDuration = sleepDuration
         
@@ -28,11 +28,17 @@ class InstagramBot:
             self.isUsingCookies = False
         self.driver = initChromeDriver(fullScreen=True, headLess=False, cookiesDirectory=cookiesDirectory)
         self.wait = WebDriverWait(self.driver, timeOutDuration)
-
+        self.STATE = State.INITIALIZED
         
         
-
+        #login is bad
+    
     def login(self, username, password):
+        if self.STATE != State.INITIALIZED or self.STATE != State.LOGGED_OUT:
+            self.STATE = State.ERROR
+            print('bad state') 
+            return
+        
         self.driver.get(self.URLS['HomePage'])
 
         if self.isUsingCookies:
@@ -99,10 +105,13 @@ class InstagramBot:
             ("xpath", '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/button[2]')
             )).click()
         
+        self.STATE = State.LOGGED_IN
+        
         return True
 
 
-    def findUser(self, user=None):
+    def findUserDirectMessage(self, user=None):
+        self.STATE = State.ERROR
         if user == None:
             print('no user inputed') #maybe throw exception
             return
@@ -148,10 +157,14 @@ class InstagramBot:
                 )).click()
             #adds user to cache for faster recall
             self.CACHE.update({user : self.driver.current_url})
+        self.STATE = State.MODE_MESSAGING
         
         
         
     def sendMessage(self, message=None):
+        if self.STATE != State.MODE_MESSAGING:
+            print('bad state')
+            return
         if message == None or message == '':
             print('non valid message provided')
             return
