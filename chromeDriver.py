@@ -5,7 +5,6 @@ from selenium.webdriver.common.by import By
 import selenium.common.exceptions as seExceptions
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions 
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.action_chains import ActionChains 
 
 def initChromeDriver(fullScreen=True, headLess=False, cookiesDirectory=None):
@@ -22,6 +21,4 @@ def initChromeDriver(fullScreen=True, headLess=False, cookiesDirectory=None):
     if cookiesDirectory != None:
         options.add_argument(r"user-data-dir=" + cookiesDirectory)
         
-
-
     return webdriver.Chrome(service=Service(), options=options)

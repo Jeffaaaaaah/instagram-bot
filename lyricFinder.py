@@ -1,4 +1,5 @@
 from chromeDriver import *
+#regex module
 import re
 
 class lyricFinder:
@@ -14,7 +15,7 @@ class lyricFinder:
             return 
         
         self.driver.get(url)
-        lyrics = WebDriverWait(self.driver, 20).until(expected_conditions.presence_of_element_located(
+        lyrics = WebDriverWait(self.driver, 30).until(expected_conditions.presence_of_element_located(
             ('xpath','/html/body/div[2]/div[2]/div[2]/div[5]')))
         
         fileName = self.parseFileName(url)
@@ -22,7 +23,7 @@ class lyricFinder:
             f.write(lyrics.text)
         return True
     
-
+    #creates a path name based on url. format of 'artist'_'songname'
     def parseFileName(self, url=None):
         url = re.sub('https://www.azlyrics.com/lyrics/', '', url)
         url = re.sub('.html', '', url)

@@ -23,7 +23,8 @@ with open(filePath) as f:
 
 
 load_dotenv()
-instabot = InstagramBot(os.getenv('INSTA_USERNAME'), os.getenv('INSTA_PASSWORD'), cookiesDirectory='Z:\Coding\instagramBot\cookies', sleepDuration=4)
+instabot = InstagramBot( cookiesDirectory='Z:\Coding\instagramBot\cookies', sleepDuration=4)
+instabot.login(os.getenv('INSTA_USERNAME'), os.getenv('INSTA_PASSWORD'))
 
 sleep(10 * random())
 instabot.findUser(victim)
@@ -31,9 +32,6 @@ sleep(10 * random())
 
 
 for line in lyrics:
-    if not instabot.windowIsOpen():
-        instabot.driver.close()
-        exit()
     instabot.sendMessage(line)
     sleep((random() * 3) + 2)
 
