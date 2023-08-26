@@ -1,4 +1,4 @@
-from ChromeDriver import *
+from chromeDriver import *
 from time import sleep
 from enum import Enum
 
@@ -33,7 +33,7 @@ class InstagramBot:
         
         #TODO: login behavior weird    
     def login(self, username, password):
-        if self.STATE != State.INITIALIZED or self.STATE != State.LOGGED_OUT:
+        if self.STATE != State.INITIALIZED and self.STATE != State.LOGGED_OUT:
             self.STATE = State.ERROR
             print('bad state') 
             return
