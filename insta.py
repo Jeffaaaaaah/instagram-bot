@@ -106,7 +106,23 @@ class InstagramBot:
         
         self.STATE = State.LOGGED_IN
         
-        return True
+        #end def login
+
+    def logout(self):
+        if self.STATE == State.LOGGED_OUT or self.STATE == State.INITIALIZED:
+            self.STATE = State.ERROR
+            print('logout: bad state')
+            return
+        
+        self.driver.get(self.URLS['HomePage'])
+        moreButton = self.wait.until(expected_conditions.presence_of_element_located(
+            ('xpath', '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[1]/div/div/div/div/div[3]/span/div/a/div')
+            )).click()
+        logoutButton = self.wait.until(expected_conditions.presence_of_element_located(
+            ('xpath', '/html/body/div[2]/div/div/div[2]/div/div/div/div[2]/div/div/div[1]/div[1]/div/div/div/div/div/div/div[1]/div/div[6]/div[1]/div/div/div/div/div')
+            )).click()
+        self.STATE = State.LOGGED_OUT
+        
 
 
     def findUserDirectMessage(self, user=None):
@@ -160,7 +176,7 @@ class InstagramBot:
         
     def sendMessage(self, message=None):
         if self.STATE != State.MODE_MESSAGING:
-            print('bad state')
+            print('sendMessage: bad state')
             return
         if message == None or message == '':
             print('non valid message provided')
