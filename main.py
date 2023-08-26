@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 import os
-from Insta import InstagramBot
+from insta import InstagramBot
 from time import sleep
 from random import random
 from ChromeDriver import Keys
