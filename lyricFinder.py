@@ -1,4 +1,4 @@
-from chromeDriver import *
+from ChromeDriver import *
 #regex module
 import re
 
@@ -10,8 +10,8 @@ class lyricFinder:
         if url == None or len(url) == 0:
             print('No url provided')
             return None
-        if not (re.match("https://https://www.azlyrics.com/", url) or re.match('https://www.azlyrics.com/', url)):
-            print('Invalid url.\n Must match "https://www.azlyrics.com/"')
+        if not re.match('https://www.azlyrics.com/', url):
+            print('Invalid url.\nMust match "https://www.azlyrics.com/"')
             return 
         
         self.driver.get(url)

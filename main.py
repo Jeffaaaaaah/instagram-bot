@@ -1,10 +1,10 @@
 from dotenv import load_dotenv
 import os
-from insta import InstagramBot
+from Insta import InstagramBot
 from time import sleep
 from random import random
-from chromeDriver import Keys
-from lyricFinder import lyricFinder
+from ChromeDriver import Keys
+from LyricFinder import lyricFinder
 
 victim = '_oof.boii_'
 

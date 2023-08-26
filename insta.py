@@ -1,4 +1,4 @@
-from chromeDriver import *
+from ChromeDriver import *
 from time import sleep
 from enum import Enum
 
@@ -18,7 +18,6 @@ class InstagramBot:
     def __init__(self, cookiesDirectory=None, sleepDuration=2, timeOutDuration=20) -> None:
         self.URLS = URLS
         self.CACHE = {}
-        
         self.sleepDuration = sleepDuration
         
         
@@ -26,13 +25,13 @@ class InstagramBot:
             self.isUsingCookies = True
         else:
             self.isUsingCookies = False
+
         self.driver = initChromeDriver(fullScreen=True, headLess=False, cookiesDirectory=cookiesDirectory)
         self.wait = WebDriverWait(self.driver, timeOutDuration)
         self.STATE = State.INITIALIZED
         
         
-        #login is bad
-    
+        #TODO: login behavior weird    
     def login(self, username, password):
         if self.STATE != State.INITIALIZED or self.STATE != State.LOGGED_OUT:
             self.STATE = State.ERROR
@@ -119,8 +118,6 @@ class InstagramBot:
         #checks if user was previously searched for
         if user in self.CACHE:
             self.driver.get(self.CACHE[user])
-
-
 
         else:
             #redirects to dms
